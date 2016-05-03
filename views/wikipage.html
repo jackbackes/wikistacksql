@@ -2,11 +2,13 @@
 
 {% block content %}
   <h3>{{ title }} <small> (<a href="{{urlTitle}}/similar">Similar</a>)</small></h3>
-  <h4>by <a href="authorUrl">name placeholder</a></h4>
-  <div>PLACEHOLDER TAG LIST</div>
+  <h4>by <a href="{{ author.authorRoute }}">{{ author.name }}</a></h4>
+  <div>{{ tags }}</div>
   <hr/>
-  <div>PLACEHOLDER AUTHOR NAME WITH LINK TO AUTHOR PAGE</div>
-  <div class="page-body">{{ content }}</div>
+  <div id="pageContent" class="page-body"></div>
+  <script>
+  $('#pageContent').html('{% autoescape false %}{{ marked }}{% endautoescape %}')
+  </script>
   <hr/>
   <a href="{{ urlTitle }}/edit" class="btn btn-primary">edit this page</a>
   <a href="{{ urlTitle }}/delete" class="btn btn-danger">delete this page</a>

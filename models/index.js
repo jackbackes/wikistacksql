@@ -1,5 +1,5 @@
 'use strict';
-
+var marked = require('marked');
 
 var sequelize = require('sequelize');
 
@@ -17,6 +17,14 @@ var User = db.define('user', {
     allowNull: false,
     validate: {
       isEmail: true
+    }
+  }
+},{
+  getterMethods: {
+    authorRoute: function() {
+      // console.log('page:',page);
+      // console.log('this:',this);
+      return '/users/' + this.id;
     }
   }
 });
@@ -41,6 +49,10 @@ var Page = db.define('page', {
   },
   status: {
     type: sequelize.ENUM('open','closed')
+  },
+  tags: {
+    type: sequelize.ARRAY(sequelize.TEXT),
+    defaultValue: null
   }
 }, {
   getterMethods: {
@@ -55,8 +67,27 @@ var Page = db.define('page', {
       // console.log(page);
       page.urlTitle = page.title.trim().replace(/\s/g,"_").replace(/\W/g,"")
     }
+  },
+  classMethods: {
+    searchByTag(tagsArray){
+      return Page.findAll({
+        where: {
+          tags:
+          {
+            $overlap: tagsArray
+          }
+        }
+      })
+    }
+  },
+  instanceMethods: {
+    marked(){
+      return marked(this.content)
+    }
   }
 });
+
+Page.belongsTo(User, { as: 'author' });
 
 module.exports = {
   db: db,
